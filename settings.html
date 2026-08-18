@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Settings - TV Tracker</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+    .settings-container {
+        width: 90%;
+        max-width: 1000px;
+        margin: 50px auto;
+    }
+
+    .settings-title {
+        font-size: 48px;
+        color: var(--accent);
+        margin-bottom: 10px;
+    }
+
+    .settings-subtitle {
+        color: #aaa;
+        margin-bottom: 40px;
+        font-size: 18px;
+    }
+
+    .settings-card {
+        background: #171b25;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, .3);
+    }
+
+    .settings-card h2 {
+        margin-bottom: 20px;
+        color: var(--accent);
+    }
+
+    .setting {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px 0;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .setting label {
+        font-size: 18px;
+    }
+
+    .setting input,
+    .setting select {
+        background: #1f2532;
+        color: white;
+        border: 1px solid #2c3445;
+        padding: 10px 12px;
+        border-radius: 8px;
+        min-width: 220px;
+        font-size: 15px;
+    }
+
+    .setting input:focus,
+    .setting select:focus {
+        outline: 2px solid var(--accent);
+    }
+
+    .setting button,
+    .save-settings {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: .3s;
+        font-size: 15px;
+    }
+
+    .setting button:hover,
+    .save-settings:hover {
+        filter: brightness(.9);
+    }
+
+    .danger {
+        background: #d63031 !important;
+    }
+
+    .danger:hover {
+        background: #b71c1c !important;
+    }
+
+    .save-settings {
+        width: 100%;
+        margin-top: 10px;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .about-text {
+        color: #bbb;
+        line-height: 1.7;
+        margin-top: 8px;
+    }
+
+    .version {
+        text-align: center;
+        color: #777;
+        margin-top: 40px;
+        margin-bottom: 30px;
+    }
+
+    /* LIGHT MODE */
+
+    body.light .settings-card {
+        background: white;
+        box-shadow: 0 0 15px rgba(0, 0, 0, .1);
+    }
+
+    body.light .settings-card h2 {
+        color: var(--accent);
+    }
+
+    body.light .settings-subtitle {
+        color: #666;
+    }
+
+    body.light .setting input,
+    body.light .setting select {
+        background: #f1f1f1;
+        color: #111;
+        border-color: #ccc;
+    }
+
+    body.light .about-text {
+        color: #555;
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 700px) {
+
+        .settings-container {
+            width: 92%;
+            margin: 30px auto;
+        }
+
+        .settings-title {
+            font-size: 38px;
+        }
+
+        .setting {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .setting input,
+        .setting select,
+        .setting button {
+            width: 100%;
+            min-width: 0;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+
+<nav>
+
+    <div class="logo">
+        📺 <span id="logoName">TV Tracker</span>
+    </div>
+
+    <ul>
+        <li>
+            <a href="index.html">Home</a>
+        </li>
+
+        <li>
+            <a href="watching.html">Watching</a>
+        </li>
+
+        <li>
+            <a href="completed.html">Completed</a>
+        </li>
+
+        <li>
+            <a class="active" href="settings.html">Settings</a>
+        </li>
+    </ul>
+
+</nav>
+
+
+<!-- SETTINGS -->
+
+<main class="settings-container">
+
+    <h1 class="settings-title">
+        Settings
+    </h1>
+
+    <p class="settings-subtitle">
+        Customize your TV Tracker experience.
+    </p>
+
+
+    <!-- PROFILE -->
+
+    <section class="settings-card">
+
+        <h2>👤 Profile</h2>
+
+        <div class="setting">
+
+            <label for="username">
+                Username
+            </label>
+
+            <input
+                type="text"
+                id="username"
+                placeholder="Enter your name"
+                maxlength="30"
+            >
+
+        </div>
+
+
+        <div class="setting">
+
+            <label for="genre">
+                Favourite Genre
+            </label>
+
+            <select id="genre">
+
+                <option value="Drama">
+                    Drama
+                </option>
+
+                <option value="Comedy">
+                    Comedy
+                </option>
+
+                <option value="Action">
+                    Action
+                </option>
+
+                <option value="Anime">
+                    Anime
+                </option>
+
+                <option value="Sci-Fi">
+                    Sci-Fi
+                </option>
+
+                <option value="Fantasy">
+                    Fantasy
+                </option>
+
+                <option value="Animation">
+                    Animation
+                </option>
+
+                <option value="Crime">
+                    Crime
+                </option>
+
+                <option value="Superhero">
+                    Superhero
+                </option>
+
+            </select>
+
+        </div>
+
+    </section>
+
+
+    <!-- APPEARANCE -->
+
+    <section class="settings-card">
+
+        <h2>🎨 Appearance</h2>
+
+
+        <div class="setting">
+
+            <label for="theme">
+                Theme
+            </label>
+
+            <select id="theme">
+
+                <option value="dark">
+                    Dark
+                </option>
+
+                <option value="light">
+                    Light
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="setting">
+
+            <label for="accent">
+                Accent Colour
+            </label>
+
+            <select id="accent">
+
+                <option value="#4da3ff">
+                    Blue
+                </option>
+
+                <option value="#9b59b6">
+                    Purple
+                </option>
+
+                <option value="#27ae60">
+                    Green
+                </option>
+
+                <option value="#e74c3c">
+                    Red
+                </option>
+
+            </select>
+
+        </div>
+
+    </section>
+
+
+    <!-- DATA -->
+
+    <section class="settings-card">
+
+        <h2>💾 Data</h2>
+
+
+        <div class="setting">
+
+            <label>
+                Export Library
+            </label>
+
+            <button
+                type="button"
+                onclick="exportLibrary()"
+            >
+                Export
+            </button>
+
+        </div>
+
+
+        <div class="setting">
+
+            <label>
+                Import Library
+            </label>
+
+            <button
+                type="button"
+                onclick="importLibrary()"
+            >
+                Import
+            </button>
+
+        </div>
+
+
+        <div class="setting">
+
+            <label>
+                Clear All Data
+            </label>
+
+            <button
+                type="button"
+                class="danger"
+                onclick="clearAllData()"
+            >
+                Delete Everything
+            </button>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="save-settings"
+            onclick="saveSettings()"
+        >
+            💾 Save Settings
+        </button>
+
+    </section>
+
+
+    <!-- ABOUT -->
+
+    <section class="settings-card">
+
+        <h2>ℹ️ About</h2>
+
+        <p>
+            <strong>TV Tracker</strong>
+        </p>
+
+        <p class="about-text">
+            Version 1.0
+        </p>
+
+        <p class="about-text">
+            Created using HTML, CSS & JavaScript.
+        </p>
+
+        <p class="about-text">
+            Track your favourite TV shows, monitor
+            progress, and build your own watch list.
+        </p>
+
+    </section>
+
+
+    <p class="version">
+        © 2026 TV Tracker
+    </p>
+
+</main>
+
+
+<!-- JAVASCRIPT -->
+
+<script src="script.js"></script>
+```
+
+</body>
+
+</html>

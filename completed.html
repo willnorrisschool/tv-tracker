@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Completed Shows - TV Tracker</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+/* =========================================================
+   COMPLETED PAGE
+   ========================================================= */
+
+.completed-container {
+
+    width: 90%;
+    max-width: 1300px;
+    margin: 50px auto;
+
+}
+
+
+/* =========================================================
+   TITLE
+   ========================================================= */
+
+.completed-title {
+
+    font-size: 48px;
+    color: var(--accent, #4da3ff);
+    margin-bottom: 10px;
+
+}
+
+
+.completed-subtitle {
+
+    color: #aaa;
+    margin-bottom: 40px;
+    font-size: 18px;
+
+}
+
+
+/* =========================================================
+   COMPLETED GRID
+   ========================================================= */
+
+.completed-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(260px, 1fr)
+        );
+
+    gap: 30px;
+
+}
+
+
+/* =========================================================
+   COMPLETED CARD
+   ========================================================= */
+
+.completed-card {
+
+    background: #171b25;
+
+    border-radius: 15px;
+
+    overflow: hidden;
+
+    transition: .3s;
+
+    box-shadow:
+        0 0 15px rgba(0,0,0,.3);
+
+}
+
+
+.completed-card:hover {
+
+    transform: translateY(-8px);
+
+    box-shadow:
+        0 15px 35px
+        rgba(77,163,255,.2);
+
+}
+
+
+/* =========================================================
+   POSTER
+   ========================================================= */
+
+.completed-card img {
+
+    width: 100%;
+
+    height: 370px;
+
+    object-fit: contain;
+
+    display: block;
+
+    background: #1f2532;
+
+}
+
+
+.completed-placeholder {
+
+    width: 100%;
+
+    height: 370px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 80px;
+
+    background: #1f2532;
+
+}
+
+
+/* =========================================================
+   INFO
+   ========================================================= */
+
+.completed-info {
+
+    padding: 20px;
+
+}
+
+
+.completed-info h2 {
+
+    margin-bottom: 10px;
+
+}
+
+
+.completed-info p {
+
+    color: #bbb;
+
+    margin: 8px 0;
+
+}
+
+
+/* =========================================================
+   COMPLETED BADGE
+   ========================================================= */
+
+.badge {
+
+    display: inline-block;
+
+    margin-top: 15px;
+
+    background: #27ae60;
+
+    padding: 8px 15px;
+
+    border-radius: 30px;
+
+    font-weight: bold;
+
+}
+
+
+/* =========================================================
+   RATING
+   ========================================================= */
+
+.rating {
+
+    color: gold;
+
+    font-size: 22px;
+
+    margin-top: 15px;
+
+    letter-spacing: 2px;
+
+}
+
+
+.no-rating {
+
+    color: #777;
+
+    font-size: 15px;
+
+    margin-top: 15px;
+
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.completed-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+}
+
+
+.rewatch,
+.change-rating {
+
+    flex: 1;
+
+    padding: 12px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background:
+        var(--accent, #4da3ff);
+
+    color: white;
+
+    cursor: pointer;
+
+    transition: .3s;
+
+}
+
+
+.rewatch:hover,
+.change-rating:hover {
+
+    opacity: .85;
+
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.empty-completed {
+
+    grid-column: 1 / -1;
+
+    text-align: center;
+
+    padding: 60px 20px;
+
+    background: #171b25;
+
+    border-radius: 15px;
+
+}
+
+
+.empty-completed h2 {
+
+    margin-bottom: 15px;
+
+}
+
+
+.empty-completed p {
+
+    color: #aaa;
+
+    margin-bottom: 25px;
+
+}
+
+
+.home-button {
+
+    display: inline-block;
+
+    padding: 12px 20px;
+
+    background:
+        var(--accent, #4da3ff);
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 8px;
+
+    transition: .3s;
+
+}
+
+
+.home-button:hover {
+
+    opacity: .85;
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .completed-title {
+
+        font-size: 36px;
+
+    }
+
+    .completed-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .completed-card img,
+    .completed-placeholder {
+
+        height: 320px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =======================================================
+     NAVIGATION
+     ======================================================= -->
+
+<nav>
+
+    <div class="logo">
+
+        📺
+
+        <span id="logoName">
+            TV Tracker
+        </span>
+
+    </div>
+
+
+    <ul>
+
+        <li>
+            <a href="index.html">
+                Home
+            </a>
+        </li>
+
+        <li>
+            <a href="watching.html">
+                Watching
+            </a>
+        </li>
+
+        <li>
+            <a class="active"
+               href="completed.html">
+                Completed
+            </a>
+        </li>
+
+        <li>
+            <a href="settings.html">
+                Settings
+            </a>
+        </li>
+
+    </ul>
+
+</nav>
+
+
+<!-- =======================================================
+     COMPLETED CONTENT
+     ======================================================= -->
+
+<div class="completed-container">
+
+    <h1 class="completed-title">
+        Completed Shows
+    </h1>
+
+
+    <p class="completed-subtitle">
+        Shows you've finished watching.
+    </p>
+
+
+    <!--
+        IMPORTANT:
+
+        This ID must match the JavaScript:
+
+        document.getElementById("completedGrid")
+    -->
+
+    <div
+        class="completed-grid"
+        id="completedGrid">
+    </div>
+
+
+</div>
+
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>

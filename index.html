@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>TV Tracker</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVIGATION -->
+
+    <nav>
+
+        <div class="logo">
+
+            📺
+
+            <span id="logoName">
+                TV Tracker
+            </span>
+
+        </div>
+
+
+        <ul>
+
+            <li>
+                <a
+                    class="active"
+                    href="index.html"
+                >
+                    Home
+                </a>
+            </li>
+
+            <li>
+                <a href="watching.html">
+                    Watchlist
+                </a>
+            </li>
+
+            <li>
+                <a href="completed.html">
+                    Completed
+                </a>
+            </li>
+
+            <li>
+                <a href="settings.html">
+                    Settings
+                </a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <h1>
+            Track Every TV Show You Watch
+        </h1>
+
+
+        <p>
+            Keep track of episodes, ratings,
+            and your watch progress all in one place.
+        </p>
+
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search for a TV show..."
+                autocomplete="off"
+            >
+
+
+            <button
+                id="searchButton"
+                type="button"
+            >
+                🔍 Search
+            </button>
+
+
+           
+
+        </div>
+
+
+        <!-- SEARCH RESULTS -->
+
+        <div
+            id="searchResults"
+            class="search-results"
+        ></div>
+
+    </section>
+
+
+
+    <!-- CONTINUE WATCHING -->
+
+    <section
+        class="section"
+        id="continueSection"
+    >
+
+        <h2>
+            Continue Watching
+        </h2>
+
+
+        <div
+            class="show-scroll"
+            id="continueWatching"
+        ></div>
+
+    </section>
+
+
+
+    <!-- RECOMMENDATIONS -->
+
+    <section
+        class="section"
+        id="recommendationSection"
+    >
+
+        <h2>
+            Recommended For You
+        </h2>
+
+
+        <div
+            class="show-scroll"
+            id="recommendations"
+        ></div>
+
+    </section>
+
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>
