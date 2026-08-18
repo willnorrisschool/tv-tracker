@@ -24,7 +24,15 @@ const shows = [
         total: 366,
         type: "series"
     },
-
+   
+	{
+		name: "Bleach: Thousand-Year Blood War",
+		image: "images/bleachtybw.jpg",
+		genre: "Anime",
+		total: 50,
+		type: "series"
+	},
+   
     {
         name: "Mr. Robot",
         image: "images/mrrobot.jpg",
