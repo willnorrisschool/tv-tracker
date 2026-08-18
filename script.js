@@ -1889,6 +1889,107 @@ function loadContinueWatching() {
 
 }
 
+/* =========================================================
+   RECOMMENDATIONS
+   ========================================================= */
+
+/*
+    Recommendation system:
+
+    - Uses Watchlist, Continue Watching and Completed
+    - Calculates genre weighting from the user's library
+    - Ratings affect the weighting:
+        5 stars = 5x
+        4 stars = 4x
+        3 stars = 3x
+        2 stars = 0.5x
+        1 star  = 0x
+        Unrated  = 1x
+
+    - Generates 20 recommendations
+    - Reroll keeps the same genre weighting
+      but chooses different shows
+*/
+
+
+/* =========================================================
+   SHUFFLE
+   ========================================================= */
+
+function shuffleArray(array) {
+
+    const shuffled =
+        [...array];
+
+    for (
+        let i = shuffled.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+        [
+            shuffled[i],
+            shuffled[j]
+        ] =
+        [
+            shuffled[j],
+            shuffled[i]
+        ];
+
+    }
+
+    return shuffled;
+
+}
+
+
+/* =========================================================
+   GET RATING WEIGHT
+   ========================================================= */
+
+function getRecommendationRatingWeight(
+    rating
+) {
+
+    if (
+        rating === undefined ||
+        rating === null ||
+        rating === 0
+    ) {
+
+        return 1;
+
+    }
+
+    switch (Number(rating)) {
+
+        case 5:
+            return 5;
+
+        case 4:
+            return 4;
+
+        case 3:
+            return 3;
+
+        case 2:
+            return 0.5;
+
+        case 1:
+            return 0;
+
+        default:
+            return 1;
+
+    }
+
+}
+
 
 /* =========================================================
    LOAD RECOMMENDATIONS
@@ -1914,259 +2015,622 @@ function loadRecommendations() {
         getProgress();
 
 
+    const ratings =
+        getRatings();
+
+
     const allShows =
         getAllShows();
 
 
-    const watchedShows =
+    /*
+        Everything already in the user's library
+        should be excluded from recommendations.
+    */
+
+    const libraryNames =
         Object.keys(progress);
 
 
     /*
-        Nothing in the library yet.
+        -----------------------------------------------------
+        CALCULATE GENRE WEIGHTS
+        -----------------------------------------------------
     */
 
-    if (
-        watchedShows.length === 0
-    ) {
+    const genreWeights = {};
 
-        container.innerHTML = `
 
-            <p style="color:#aaa;">
+    libraryNames.forEach(
+        showName => {
 
-                Add some shows to your
-                watchlist and we'll recommend
-                something for you!
+            const show =
+                findShow(showName);
 
-            </p>
 
-        `;
+            if (
+                !show ||
+                !show.genre ||
+                show.genre === "Unknown"
+            ) {
 
-        return;
-
-    }
-
-
-    /* Count genres */
-
-    const genreCount =
-        {};
-
-
-    watchedShows.forEach(name => {
-
-        const show =
-            findShow(name);
-
-
-        if (
-            show &&
-            show.genre &&
-            show.genre !== "Unknown"
-        ) {
-
-            genreCount[show.genre] =
-                (
-                    genreCount[show.genre] || 0
-                ) + 1;
-
-        }
-
-    });
-
-
-    /*
-        If we cannot determine a genre.
-    */
-
-    if (
-        Object.keys(genreCount).length === 0
-    ) {
-
-        container.innerHTML = `
-
-            <p style="color:#aaa;">
-
-                Add more shows to get
-                personalised recommendations.
-
-            </p>
-
-        `;
-
-        return;
-
-    }
-
-
-    /* Favourite genre */
-
-    const favouriteGenre =
-        Object.keys(
-            genreCount
-        ).sort(
-            (a, b) =>
-                genreCount[b] -
-                genreCount[a]
-        )[0];
-
-
-    /* Find recommendations */
-
-    const recommendations =
-        allShows.filter(show => {
-
-            return (
-                show.genre ===
-                favouriteGenre &&
-
-                !watchedShows.includes(
-                    show.name
-                )
-            );
-
-        });
-
-
-    /*
-        Nothing left in that genre.
-    */
-
-    if (
-        recommendations.length === 0
-    ) {
-
-        container.innerHTML = `
-
-            <p style="color:#aaa;">
-
-                You've already added all our
-                ${favouriteGenre} recommendations!
-
-            </p>
-
-        `;
-
-        return;
-
-    }
-
-
-    /* Create recommendation cards */
-
-    recommendations.forEach(show => {
-
-        const card =
-            document.createElement("div");
-
-        card.className =
-            "show-card";
-
-
-        /* Poster */
-
-        const poster =
-            document.createElement("div");
-
-        poster.className =
-            "poster";
-
-
-        if (show.image) {
-
-            const image =
-                document.createElement("img");
-
-            image.src =
-                show.image;
-
-            image.alt =
-                show.name;
-
-            poster.appendChild(
-                image
-            );
-
-        } else {
-
-            poster.textContent =
-                "📺";
-
-        }
-
-
-        /* Info */
-
-        const info =
-            document.createElement("div");
-
-        info.className =
-            "info";
-
-
-        const title =
-            document.createElement("h3");
-
-        title.textContent =
-            show.name;
-
-
-        const genre =
-            document.createElement("p");
-
-        genre.textContent =
-            show.genre;
-
-
-        const button =
-            document.createElement("button");
-
-        button.className =
-            "watch";
-
-        button.textContent =
-            "+ Add to Watchlist";
-
-
-        button.addEventListener(
-            "click",
-            function () {
-
-                addToWatchlist(
-                    show.name
-                );
+                return;
 
             }
+
+
+            const rating =
+                ratings[show.name];
+
+
+            const weight =
+                getRecommendationRatingWeight(
+                    rating
+                );
+
+
+            /*
+                1-star shows contribute nothing.
+            */
+
+            if (weight <= 0) {
+                return;
+            }
+
+
+            if (
+                !genreWeights[show.genre]
+            ) {
+
+                genreWeights[show.genre] =
+                    0;
+
+            }
+
+
+            genreWeights[show.genre] +=
+                weight;
+
+        }
+    );
+
+
+    /*
+        No usable genres yet.
+    */
+
+    const genres =
+        Object.keys(
+            genreWeights
         );
 
 
-        info.appendChild(
-            title
+    if (
+        genres.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <p style="color:#aaa;">
+
+                Add some shows to your library
+                to get personalised recommendations!
+
+            </p>
+
+        `;
+
+        return;
+
+    }
+
+
+    /*
+        -----------------------------------------------------
+        TOTAL WEIGHT
+        -----------------------------------------------------
+    */
+
+    const totalWeight =
+        genres.reduce(
+            (
+                total,
+                genre
+            ) => {
+
+                return (
+                    total +
+                    genreWeights[genre]
+                );
+
+            },
+            0
         );
 
-        info.appendChild(
-            genre
+
+    /*
+        -----------------------------------------------------
+        CREATE GENRE ALLOCATIONS
+        -----------------------------------------------------
+
+        We want exactly 20 recommendations.
+
+        Example:
+
+        Anime     = 60%
+        Superhero = 20%
+        Fantasy   = 20%
+
+        Therefore:
+
+        Anime     = 12
+        Superhero = 4
+        Fantasy   = 4
+    */
+
+    const recommendationCount =
+        20;
+
+
+    const allocations = [];
+
+
+    let allocated =
+        0;
+
+
+    genres.forEach(
+        genre => {
+
+            const exact =
+                (
+                    genreWeights[genre] /
+                    totalWeight
+                ) *
+                recommendationCount;
+
+
+            const base =
+                Math.floor(
+                    exact
+                );
+
+
+            allocations.push({
+
+                genre:
+                    genre,
+
+                count:
+                    base,
+
+                remainder:
+                    exact - base
+
+            });
+
+
+            allocated +=
+                base;
+
+        }
+    );
+
+
+    /*
+        Distribute remaining slots based
+        on the largest decimal remainder.
+    */
+
+    let remaining =
+        recommendationCount -
+        allocated;
+
+
+    allocations.sort(
+        (
+            a,
+            b
+        ) =>
+            b.remainder -
+            a.remainder
+    );
+
+
+    for (
+        let i = 0;
+        i < remaining;
+        i++
+    ) {
+
+        allocations[i %
+            allocations.length
+        ].count++;
+
+    }
+
+
+    /*
+        -----------------------------------------------------
+        FIND AVAILABLE SHOWS
+        -----------------------------------------------------
+    */
+
+    const recommendations = [];
+
+
+    allocations.forEach(
+        allocation => {
+
+            const available =
+                allShows.filter(
+                    show => {
+
+                        return (
+
+                            show.genre ===
+                            allocation.genre &&
+
+                            !libraryNames.includes(
+                                show.name
+                            )
+
+                        );
+
+                    }
+                );
+
+
+            /*
+                Randomise shows within this genre.
+            */
+
+            const shuffled =
+                shuffleArray(
+                    available
+                );
+
+
+            /*
+                Add the requested number.
+
+                If there aren't enough shows in
+                this genre, use everything available.
+            */
+
+            const selected =
+                shuffled.slice(
+                    0,
+                    allocation.count
+                );
+
+
+            selected.forEach(
+                show => {
+
+                    recommendations.push(
+                        show
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /*
+        -----------------------------------------------------
+        IF LESS THAN 20 ARE AVAILABLE
+        -----------------------------------------------------
+    */
+
+    /*
+        If a genre doesn't have enough shows,
+        fill the remaining slots from any
+        available genre while respecting the
+        same weighting as much as possible.
+    */
+
+    if (
+        recommendations.length <
+        recommendationCount
+    ) {
+
+        const alreadyRecommended =
+            recommendations.map(
+                show =>
+                    show.name
+            );
+
+
+        const remainingShows =
+            allShows.filter(
+                show => {
+
+                    return (
+
+                        !libraryNames.includes(
+                            show.name
+                        ) &&
+
+                        !alreadyRecommended.includes(
+                            show.name
+                        ) &&
+
+                        show.genre &&
+                        show.genre !== "Unknown"
+
+                    );
+
+                }
+            );
+
+
+        const extra =
+            shuffleArray(
+                remainingShows
+            );
+
+
+        const slots =
+            recommendationCount -
+            recommendations.length;
+
+
+        recommendations.push(
+            ...extra.slice(
+                0,
+                slots
+            )
         );
 
-        info.appendChild(
-            button
+    }
+
+
+    /*
+        -----------------------------------------------------
+        SHUFFLE FINAL RESULTS
+        -----------------------------------------------------
+    */
+
+    const finalRecommendations =
+        shuffleArray(
+            recommendations
         );
 
 
-        card.appendChild(
-            poster
+    /*
+        -----------------------------------------------------
+        DISPLAY
+        -----------------------------------------------------
+    */
+
+    if (
+        finalRecommendations.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <p style="color:#aaa;">
+
+                We've run out of shows to recommend
+                from your current library!
+
+            </p>
+
+        `;
+
+        return;
+
+    }
+
+
+    /*
+        REROLL BUTTON
+    */
+
+    const rerollButton =
+        document.createElement(
+            "button"
         );
 
-        card.appendChild(
-            info
-        );
+
+    rerollButton.className =
+        "watch";
 
 
-        container.appendChild(
-            card
-        );
+    rerollButton.textContent =
+        "🔄 Reroll Recommendations";
 
-    });
+
+    rerollButton.style.marginBottom =
+        "25px";
+
+
+    rerollButton.addEventListener(
+        "click",
+        function () {
+
+            loadRecommendations();
+
+        }
+    );
+
+
+    container.appendChild(
+        rerollButton
+    );
+
+
+    /*
+        -----------------------------------------------------
+        CREATE CARDS
+        -----------------------------------------------------
+    */
+
+    finalRecommendations.forEach(
+        show => {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "show-card";
+
+
+            /*
+                POSTER
+            */
+
+            const poster =
+                document.createElement(
+                    "div"
+                );
+
+
+            poster.className =
+                "poster";
+
+
+            if (show.image) {
+
+                const image =
+                    document.createElement(
+                        "img"
+                    );
+
+
+                image.src =
+                    show.image;
+
+
+                image.alt =
+                    show.name;
+
+
+                poster.appendChild(
+                    image
+                );
+
+            } else {
+
+                poster.textContent =
+                    "📺";
+
+            }
+
+
+            /*
+                INFO
+            */
+
+            const info =
+                document.createElement(
+                    "div"
+                );
+
+
+            info.className =
+                "info";
+
+
+            /*
+                TITLE
+            */
+
+            const title =
+                document.createElement(
+                    "h3"
+                );
+
+
+            title.textContent =
+                show.name;
+
+
+            /*
+                GENRE
+            */
+
+            const genre =
+                document.createElement(
+                    "p"
+                );
+
+
+            genre.textContent =
+                show.genre;
+
+
+            /*
+                ADD BUTTON
+            */
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "watch";
+
+
+            button.textContent =
+                "+ Add to Watchlist";
+
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    addToWatchlist(
+                        show.name
+                    );
+
+                }
+            );
+
+
+            /*
+                BUILD CARD
+            */
+
+            info.appendChild(
+                title
+            );
+
+
+            info.appendChild(
+                genre
+            );
+
+
+            info.appendChild(
+                button
+            );
+
+
+            card.appendChild(
+                poster
+            );
+
+
+            card.appendChild(
+                info
+            );
+
+
+            container.appendChild(
+                card
+            );
+
+        }
+    );
 
 }
 
